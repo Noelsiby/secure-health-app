@@ -6,20 +6,13 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
     ports:
-<<<<<<< HEAD
-      - "8081:8081"
-=======
       - "8080:8080"
->>>>>>> c0b70c8a3a8ec317e248fdce5463bffa3cd1cac8
     networks: [ appnet ]
+
   app:
     build: ./app
     environment:
-<<<<<<< HEAD
-      - OIDC_ISSUER=http://keycloak:8081/realms/health
-=======
       - OIDC_ISSUER=http://keycloak:8080/realms/health
->>>>>>> c0b70c8a3a8ec317e248fdce5463bffa3cd1cac8
       - OIDC_AUDIENCE=health-api
       - APP_DATA_KEY=/run/secrets/data_key
     secrets:
@@ -27,9 +20,10 @@ services:
     ports:
       - "8443:8443"
     volumes:
-      - ./certs:/app/certs   # Mount local certs folder into container
+      - ./certs:/app/certs
     depends_on: [ keycloak ]
     networks: [ appnet ]
+
   jenkins:
     image: jenkins/jenkins:lts
     user: root
@@ -38,13 +32,10 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-<<<<<<< HEAD
-      # Mount Docker socket so Jenkins can use host Docker
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
-=======
->>>>>>> c0b70c8a3a8ec317e248fdce5463bffa3cd1cac8
     networks: [ appnet ]
+
   prometheus:
     image: prom/prometheus
     volumes:
@@ -52,11 +43,13 @@ services:
     ports:
       - "9090:9090"
     networks: [ appnet ]
+
   grafana:
     image: grafana/grafana
     ports:
       - "3000:3000"
     networks: [ appnet ]
+
   loki:
     image: grafana/loki
     command: -config.file=/etc/loki/config.yml
@@ -65,6 +58,7 @@ services:
     ports:
       - "3100:3100"
     networks: [ appnet ]
+
   promtail:
     image: grafana/promtail
     command: -config.file=/etc/promtail/config.yml
@@ -72,10 +66,13 @@ services:
       - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
     networks: [ appnet ]
+
 secrets:
   data_key:
     file: ./keys/data.key
+
 volumes:
   jenkins_home:
+
 networks:
   appnet:

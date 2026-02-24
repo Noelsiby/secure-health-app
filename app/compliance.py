@@ -2,7 +2,7 @@ import time, json, os
 from flask import g
 
 AUDIT_FILE = 'audit.log'
-RETENTION_DAYS = int(os.environ.get('RETENTION_DAYS','30'))
+RETENTION_DAYS = int(os.environ.get('RETENTION_DAYS', '30'))
 
 def audit_log(action, pid):
     user = getattr(g, 'user', {})
@@ -12,7 +12,9 @@ def audit_log(action, pid):
         'patient_id': pid
     }
     print(log_entry)
-    """ entry = {
+
+    """
+    entry = {
         'ts': int(time.time()),
         'user': request.user.get('preferred_username','unknown'),
         'action': action,
@@ -21,13 +23,10 @@ def audit_log(action, pid):
     }
     with open(AUDIT_FILE,'a') as f:
         f.write(json.dumps(entry)+'\n')
- """
+    """
+
 def data_minimize(payload):
-    allowed = {k: payload[k] for k in ['id','name','dob','consent'] if k in payload}
-<<<<<<< HEAD
-    #allowed = {k: payloads[k] for k in ['id','name','dob','consent'] if k in payload}
-=======
->>>>>>> c0b70c8a3a8ec317e248fdce5463bffa3cd1cac8
+    allowed = {k: payload[k] for k in ['id', 'name', 'dob', 'consent'] if k in payload}
     return allowed
 
 def enforce_consent(payload):
@@ -35,6 +34,6 @@ def enforce_consent(payload):
         raise ValueError('Consent required')
 
 def retention_cleanup():
-    cutoff = time.time() - RETENTION_DAYS*24*3600
+    cutoff = time.time() - RETENTION_DAYS * 24 * 3600
     # stub: you’d scan files with timestamps and remove older than cutoff
     return cutoff
